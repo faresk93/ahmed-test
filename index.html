@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بطّل الشيشة يا أحمد الشياش</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #fff;
+        }
+
+        /* Smoke Animation Background */
+        .smoke-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .smoke {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(ellipse at center, rgba(255,255,255,0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: smokeRise 8s infinite ease-out;
+            opacity: 0;
+        }
+
+        @keyframes smokeRise {
+            0% {
+                transform: translateY(100vh) scale(0.5);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(-100px) scale(3);
+                opacity: 0;
+            }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ff6b6b, #feca57, #ff9ff3, #54a0ff);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+            text-shadow: 0 0 30px rgba(255,107,107,0.5);
+            margin-bottom: 20px;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #feca57;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Shisha Character */
+        .shisha-character {
+            font-size: 150px;
+            text-align: center;
+            animation: shake 0.5s infinite;
+            cursor: pointer;
+            transition: transform 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .shisha-character:hover {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+
+        /* Counter Section */
+        .counter-section {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .counter-title {
+            font-size: 1.8rem;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+
+        .counter-display {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #feca57;
+            text-shadow: 0 0 20px rgba(254,202,87,0.5);
+        }
+
+        .counter-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a5a);
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-family: 'Cairo', sans-serif;
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 20px 10px;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(255,107,107,0.4);
+        }
+
+        .counter-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255,107,107,0.6);
+        }
+
+        .counter-btn.green {
+            background: linear-gradient(45deg, #26de81, #20bf6b);
+            box-shadow: 0 10px 30px rgba(38,222,129,0.4);
+        }
+
+        .counter-btn.green:hover {
+            box-shadow: 0 15px 40px rgba(38,222,129,0.6);
+        }
+
+        /* Hazards Section */
+        .hazards-section {
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #ff6b6b;
+            margin-bottom: 40px;
+        }
+
+        .hazards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .hazard-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.4s;
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hazard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .hazard-card:hover::before {
+            left: 100%;
+        }
+
+        .hazard-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: #feca57;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .hazard-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .hazard-title {
+            font-size: 1.4rem;
+            color: #feca57;
+            margin-bottom: 10px;
+        }
+
+        .hazard-desc {
+            color: #ddd;
+            line-height: 1.8;
+        }
+
+        .hazard-joke {
+            color: #ff9ff3;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            font-style: italic;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .hazard-card:hover .hazard-joke {
+            opacity: 1;
+        }
+
+        /* Facts Carousel */
+        .facts-section {
+            background: rgba(255,107,107,0.2);
+            padding: 40px 20px;
+            margin: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .fact-display {
+            text-align: center;
+            font-size: 1.8rem;
+            max-width: 800px;
+            margin: 0 auto;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fact-nav {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .fact-dot {
+            width: 12px;
+            height: 12px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .fact-dot.active {
+            background: #feca57;
+            transform: scale(1.3);
+        }
+
+        /* Ahmed's Journey */
+        .journey-section {
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .journey-item {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            transition: all 0.3s;
+        }
+
+        .journey-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(-10px);
+        }
+
+        .journey-emoji {
+            font-size: 50px;
+            margin-left: 20px;
+        }
+
+        .journey-text {
+            flex: 1;
+        }
+
+        .journey-age {
+            color: #feca57;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Quiz Section */
+        .quiz-section {
+            background: rgba(84, 160, 255, 0.2);
+            padding: 40px 20px;
+            margin: 40px 0;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quiz-question {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .quiz-option {
+            background: rgba(255,255,255,0.1);
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .quiz-option:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: #54a0ff;
+        }
+
+        .quiz-option.correct {
+            background: rgba(38,222,129,0.5);
+            border-color: #26de81;
+        }
+
+        .quiz-option.wrong {
+            background: rgba(255,107,107,0.5);
+            border-color: #ff6b6b;
+        }
+
+        .quiz-result {
+            margin-top: 20px;
+            font-size: 1.3rem;
+            display: none;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-message {
+            font-size: 2rem;
+            color: #26de81;
+            margin-bottom: 20px;
+        }
+
+        .social-icons {
+            font-size: 30px;
+        }
+
+        .social-icons span {
+            margin: 0 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            display: inline-block;
+        }
+
+        .social-icons span:hover {
+            transform: scale(1.3);
+        }
+
+        /* Floating Elements */
+        .floating-lung {
+            position: fixed;
+            font-size: 40px;
+            animation: float 6s infinite ease-in-out;
+            z-index: 0;
+            opacity: 0.5;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(10deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2rem;
+            }
+            .shisha-character {
+                font-size: 100px;
+            }
+            .counter-display {
+                font-size: 2.5rem;
+            }
+            .fact-display {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* Popup */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            animation: popIn 0.5s;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .popup-close {
+            background: #ff6b6b;
+            border: none;
+            padding: 10px 30px;
+            color: white;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Smoke Background -->
+    <div class="smoke-container" id="smokeContainer"></div>
+
+    <!-- Floating Elements -->
+    <div class="floating-lung" style="top: 20%; left: 10%;">🫁</div>
+    <div class="floating-lung" style="top: 60%; right: 15%; animation-delay: 2s;">💨</div>
+    <div class="floating-lung" style="top: 40%; left: 80%; animation-delay: 4s;">🚭</div>
+
+    <!-- Header -->
+    <header class="header">
+        <h1 class="main-title">ببطّل الشيشة يا أحمد الشياش! 🚭</h1>
+        <p class="subtitle">دليلك الكوميدي للهروب من سحابة الدخان ☁️</p>
+    </header>
+
+    <!-- Shisha Character -->
+    <div class="shisha-character" onclick="shishaClick()">🪬</div>
+    <p style="text-align: center; color: #feca57;">👆 اضغط على الشيشة لتشوف شو بيصير!</p>
+
+    <!-- Counter Section -->
+    <div class="counter-section">
+        <h2 class="counter-title">عداد أيام أحمد بدون شيشة 📅</h2>
+        <div class="counter-display" id="dayCounter">0</div>
+        <p style="margin: 10px 0; color: #ddd;">يوم بدون دخان = يوم ربحته من عمرك!</p>
+        <button class="counter-btn" onclick="resetCounter()">😢 انتكست</button>
+        <button class="counter-btn green" onclick="addDay()">💪 يوم جديد بدون شيشة!</button>
+    </div>
+
+    <!-- Hazards Section -->
+    <section class="hazards-section">
+        <h2 class="section-title">مخاطر الشيشة (اللي ما حد بيقولك عنها) 💀</h2>
+        <div class="hazards-grid">
+            <div class="hazard-card">
+                <span class="hazard-icon">🫁</span>
+                <h3 class="hazard-title">رئتيك صارت فلتر!</h3>
+                <p class="hazard-desc">ساعة شيشة = 100 سيجارة! رئتيك بتشتغل أوفر تايم بدون راتب.</p>
+                <p class="hazard-joke">"الفلتر الأصلي أرخص يا أحمد!" 😂</p>
+            </div>
+
+            <div class="hazard-card">
+                <span class="hazard-icon">❤️</span>
+                <h3 class="hazard-title">قلبك بيصرخ!</h3>
+                <p class="hazard-desc">ضغط دم عالي وأمراض قلب. قلبك مش بلايستيشن تلعب فيه!</p>
+                <p class="hazard-joke">"قلبك بيحبك، بطّل تأذيه!" 💔</p>
+            </div>
+
+            <div class="hazard-card">
+                <span class="hazard-icon">🦷</span>
+                <h3 class="hazard-title">ابتسامتك الصفراء!</h3>
+                <p class="hazard-desc">أسنان صفراء ورائحة فم... حتى الناموس بيهرب منك!</p>
+                <p class="hazard-joke">"كولجيت مش رح ينقذك!" 🪥</p>
+            </div>
+
+            <div class="hazard-card">
+                <span class="hazard-icon">🧠</span>
+                <h3 class="hazard-title">مخك بيختنق!</h3>
+                <p class="hazard-desc">أوكسجين أقل للدماغ = تركيز صفر. عشان هيك ما بتفهم!</p>
+                <p class="hazard-joke">"اللي ما عنده مخ، بيدخن!" 🤪</p>
+            </div>
+
+            <div class="hazard-card">
+                <span class="hazard-icon">💰</span>
+                <h3 class="hazard-title">جيبتك فاضية!</h3>
+                <p class="hazard-desc">500 دينار بالشهر على دخان؟ كان اشتريت PS5!</p>
+                <p class="hazard-joke">"المعسل أغلى من الذهب!" 💸</p>
+            </div>
+
+            <div class="hazard-card">
+                <span class="hazard-icon">🦠</span>
+                <h3 class="hazard-title">جراثيم مجانية!</h3>
+                <p class="hazard-desc">تشارك الخرطوم مع 10 أشخاص؟ مبروك، صرت مصنع فيروسات!</p>
+                <p class="hazard-joke">"كورونا بتحبك كتير!" 😷</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Facts Carousel -->
+    <section class="facts-section">
+        <h2 class="section-title">حقائق صادمة! 😱</h2>
+        <div class="fact-display" id="factDisplay">
+            دخان الشيشة فيه 36 مادة مسرطنة... يعني بتشرب كوكتيل سرطان!
+        </div>
+        <div class="fact-nav" id="factNav"></div>
+    </section>
+
+    <!-- Ahmed's Journey -->
+    <section class="journey-section">
+        <h2 class="section-title">رحلة أحمد مع الشيشة 📖</h2>
+
+        <div class="journey-item">
+            <span class="journey-emoji">👶</span>
+            <div class="journey-text">
+                <span class="journey-age">عمر 15:</span>
+                <p>"يلا نجرب، شو أسوأ شي ممكن يصير؟"</p>
+            </div>
+        </div>
+
+        <div class="journey-item">
+            <span class="journey-emoji">🧑</span>
+            <div class="journey-text">
+                <span class="journey-age">عمر 20:</span>
+                <p>"بس شيشة وحدة باليوم، مش مشكلة!"</p>
+            </div>
+        </div>
+
+        <div class="journey-item">
+            <span class="journey-emoji">😮‍💨</span>
+            <div class="journey-text">
+                <span class="journey-age">عمر 25:</span>
+                <p>"ليش ما بقدر أطلع الدرج بدون ما أنهج؟"</p>
+            </div>
+        </div>
+
+        <div class="journey-item">
+            <span class="journey-emoji">🏥</span>
+            <div class="journey-text">
+                <span class="journey-age">عمر 30:</span>
+                <p>"الدكتور قال لازم أبطّل... المشكلة صارت جدية!"</p>
+            </div>
+        </div>
+
+        <div class="journey-item">
+            <span class="journey-emoji">💪</span>
+            <div class="journey-text">
+                <span class="journey-age">اليوم:</span>
+                <p>"بطّلت! وإنت كمان فيك تبطّل يا أحمد!"</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quiz Section -->
+    <section class="quiz-section">
+        <h2 class="section-title">اختبر معلوماتك! 🧐</h2>
+        <p class="quiz-question" id="quizQuestion">كم سيجارة تعادل ساعة واحدة من الشيشة؟</p>
+        <div class="quiz-options" id="quizOptions">
+            <div class="quiz-option" onclick="checkAnswer(this, false)">10 سجائر</div>
+            <div class="quiz-option" onclick="checkAnswer(this, false)">50 سيجارة</div>
+            <div class="quiz-option" onclick="checkAnswer(this, true)">100 سيجارة</div>
+            <div class="quiz-option" onclick="checkAnswer(this, false)">25 سيجارة</div>
+        </div>
+        <p class="quiz-result" id="quizResult"></p>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-message">🌟 حياتك أغلى من نفس دخان! 🌟</p>
+        <p style="margin-bottom: 20px;">شارك هذه الصفحة مع صاحبك اللي بيدخن شيشة!</p>
+        <div class="social-icons">
+            <span onclick="share('whatsapp')">📱</span>
+            <span onclick="share('copy')">📋</span>
+        </div>
+        <p style="margin-top: 30px; color: #888;">صُنع بـ ❤️ لإنقاذ رئات العالم العربي</p>
+    </footer>
+
+    <!-- Popup -->
+    <div class="popup-overlay" id="popup">
+        <div class="popup-content">
+            <p style="font-size: 60px;">😵</p>
+            <h3 style="color: #ff6b6b; font-size: 1.5rem;">هذا اللي بيصير لرئتيك!</h3>
+            <p style="margin-top: 15px;">كل نفس شيشة = خلايا ميتة + سموم + ندم!</p>
+            <button class="popup-close" onclick="closePopup()">فهمت! 😰</button>
+        </div>
+    </div>
+
+    <script>
+        // Create smoke effects
+        const smokeContainer = document.getElementById('smokeContainer');
+        for (let i = 0; i < 15; i++) {
+            const smoke = document.createElement('div');
+            smoke.className = 'smoke';
+            smoke.style.left = Math.random() * 100 + '%';
+            smoke.style.animationDelay = Math.random() * 8 + 's';
+            smoke.style.width = (50 + Math.random() * 100) + 'px';
+            smoke.style.height = smoke.style.width;
+            smokeContainer.appendChild(smoke);
+        }
+
+        // Day counter
+        let days = localStorage.getItem('shishaDays') || 0;
+        document.getElementById('dayCounter').textContent = days;
+
+        function addDay() {
+            days++;
+            localStorage.setItem('shishaDays', days);
+            document.getElementById('dayCounter').textContent = days;
+            confetti();
+        }
+
+        function resetCounter() {
+            days = 0;
+            localStorage.setItem('shishaDays', days);
+            document.getElementById('dayCounter').textContent = days;
+            alert('لا تستسلم يا أحمد! كل محاولة تقربك من النجاح! 💪');
+        }
+
+        // Facts carousel
+        const facts = [
+            'دخان الشيشة فيه 36 مادة مسرطنة... يعني بتشرب كوكتيل سرطان! 🍹☠️',
+            'الفحم المشتعل بيوصل حرارته لـ 450 درجة... رئتيك مش شواية! 🔥',
+            'مدخن الشيشة بيستنشق 90,000 ملليلتر دخان بالجلسة! 💨',
+            'الشيشة بتسبب ضعف جنسي... يعني مش رح تعجب حدا! 😬',
+            '70% من مدخني الشيشة عندهم أمراض لثة... ابتسامة زومبي! 🧟',
+            'الماء ما بيفلتر السموم... هذي كذبة كبيرة! 🚫💧'
+        ];
+
+        let currentFact = 0;
+        const factDisplay = document.getElementById('factDisplay');
+        const factNav = document.getElementById('factNav');
+
+        // Create dots
+        facts.forEach((_, i) => {
+            const dot = document.createElement('span');
+            dot.className = 'fact-dot' + (i === 0 ? ' active' : '');
+            dot.onclick = () => showFact(i);
+            factNav.appendChild(dot);
+        });
+
+        function showFact(index) {
+            currentFact = index;
+            factDisplay.style.animation = 'none';
+            factDisplay.offsetHeight;
+            factDisplay.style.animation = 'fadeIn 0.5s';
+            factDisplay.textContent = facts[index];
+
+            document.querySelectorAll('.fact-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        setInterval(() => {
+            showFact((currentFact + 1) % facts.length);
+        }, 5000);
+
+        // Shisha click
+        function shishaClick() {
+            document.getElementById('popup').style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        // Quiz
+        function checkAnswer(element, isCorrect) {
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+
+            if (isCorrect) {
+                element.classList.add('correct');
+                document.getElementById('quizResult').textContent = '🎉 صح! ساعة شيشة = 100 سيجارة! مصيبة صح؟';
+            } else {
+                element.classList.add('wrong');
+                document.querySelectorAll('.quiz-option')[2].classList.add('correct');
+                document.getElementById('quizResult').textContent = '❌ غلط! الجواب 100 سيجارة! أكتر مما توقعت؟';
+            }
+            document.getElementById('quizResult').style.display = 'block';
+        }
+
+        // Confetti effect
+        function confetti() {
+            const colors = ['#ff6b6b', '#feca57', '#ff9ff3', '#54a0ff', '#26de81'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.cssText = `
+                    position: fixed;
+                    width: 10px;
+                    height: 10px;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    top: -10px;
+                    left: ${Math.random() * 100}%;
+                    z-index: 1000;
+                    animation: confettiFall ${2 + Math.random() * 2}s forwards;
+                    border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+                `;
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 4000);
+            }
+        }
+
+        // Add confetti animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes confettiFall {
+                to {
+                    top: 100vh;
+                    transform: rotate(720deg);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Share function
+        function share(platform) {
+            const url = window.location.href;
+            const text = 'بطّل شيشة يا أحمد! 🚭 شوف هذي الصفحة المضحكة عن مخاطر الشيشة!';
+
+            if (platform === 'whatsapp') {
+                window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`);
+            } else if (platform === 'copy') {
+                navigator.clipboard.writeText(url);
+                alert('تم نسخ الرابط! 📋');
+            }
+        }
+    </script>
+</body>
+</html>
