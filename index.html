@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بطّل الشيشة يا أحمد الشياش</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
 
@@ -91,6 +93,217 @@
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
+        }
+
+        /* 3D Simulation Section */
+        .simulation-section {
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+            margin: 40px auto;
+            max-width: 1200px;
+        }
+
+        .simulation-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #threejs-container {
+            width: 500px;
+            height: 600px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(255, 107, 107, 0.3);
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a15 100%);
+            border: 3px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .simulation-controls {
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+        }
+
+        .simulation-title {
+            font-size: 2rem;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+
+        .step-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .step-dot.active {
+            background: linear-gradient(45deg, #ff6b6b, #ff9ff3);
+            border-color: #fff;
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+        }
+
+        .step-dot.completed {
+            background: rgba(255, 107, 107, 0.5);
+        }
+
+        .step-content {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .step-content.active {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.2);
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            color: #feca57;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-description {
+            color: #ddd;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        .damage-meter {
+            margin-top: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .damage-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .damage-bar {
+            height: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .damage-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease, background 0.5s;
+            width: 0%;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a5a);
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            font-family: 'Cairo', sans-serif;
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(255,107,107,0.4);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255,107,107,0.6);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .nav-btn.green {
+            background: linear-gradient(45deg, #26de81, #20bf6b);
+            box-shadow: 0 10px 30px rgba(38,222,129,0.4);
+        }
+
+        .nav-btn.green:hover {
+            box-shadow: 0 15px 40px rgba(38,222,129,0.6);
+        }
+
+        /* Health Stats */
+        .health-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-icon {
+            font-size: 30px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #26de81;
+            transition: color 0.5s;
+        }
+
+        .stat-value.danger {
+            color: #ff6b6b;
+        }
+
+        .stat-value.warning {
+            color: #feca57;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #aaa;
         }
 
         /* Shisha Character */
@@ -449,6 +662,13 @@
             .fact-display {
                 font-size: 1.3rem;
             }
+            #threejs-container {
+                width: 100%;
+                height: 400px;
+            }
+            .simulation-title {
+                font-size: 1.5rem;
+            }
         }
 
         /* Popup */
@@ -490,6 +710,37 @@
             cursor: pointer;
             margin-top: 20px;
         }
+
+        /* Particle effects */
+        .smoke-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(100, 100, 100, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Glowing effect for organs */
+        @keyframes pulse {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+
+        @keyframes warning-pulse {
+            0%, 100% {
+                filter: brightness(1);
+                box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+            }
+            50% {
+                filter: brightness(1.2);
+                box-shadow: 0 0 40px rgba(255, 107, 107, 0.6);
+            }
+        }
+
+        .warning-glow {
+            animation: warning-pulse 1s infinite;
+        }
     </style>
 </head>
 <body>
@@ -506,6 +757,71 @@
         <h1 class="main-title">بطّل الشيشة يا أحمد الشياش! 🚭</h1>
         <p class="subtitle">دليلك الكوميدي للهروب من سحابة الدخان ☁️</p>
     </header>
+
+    <!-- 3D Health Simulation Section -->
+    <section class="simulation-section">
+        <h2 class="section-title">🎮 محاكاة ثلاثية الأبعاد: شوف شو بيصير لجسمك! 🎮</h2>
+
+        <div class="simulation-container">
+            <div id="threejs-container"></div>
+
+            <div class="simulation-controls">
+                <h3 class="simulation-title">رحلة الدمار في جسم أحمد 💀</h3>
+
+                <div class="step-indicator">
+                    <div class="step-dot active" data-step="0">1</div>
+                    <div class="step-dot" data-step="1">2</div>
+                    <div class="step-dot" data-step="2">3</div>
+                    <div class="step-dot" data-step="3">4</div>
+                    <div class="step-dot" data-step="4">5</div>
+                </div>
+
+                <div class="step-content active" id="step-content">
+                    <h4 class="step-title"><span>🌟</span> <span id="step-title-text">أحمد السليم</span></h4>
+                    <p class="step-description" id="step-description">
+                        هذا أحمد قبل ما يبدأ يدخن شيشة. رئتيه زي الورد، قلبه قوي، ومخه شغال تمام!
+                    </p>
+                    <div class="damage-meter">
+                        <div class="damage-label">
+                            <span>مستوى الضرر</span>
+                            <span id="damage-percent">0%</span>
+                        </div>
+                        <div class="damage-bar">
+                            <div class="damage-fill" id="damage-fill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="health-stats">
+                    <div class="stat-box">
+                        <div class="stat-icon">🫁</div>
+                        <div class="stat-value" id="lung-health">100%</div>
+                        <div class="stat-label">صحة الرئتين</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon">❤️</div>
+                        <div class="stat-value" id="heart-health">100%</div>
+                        <div class="stat-label">صحة القلب</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon">🧠</div>
+                        <div class="stat-value" id="brain-health">100%</div>
+                        <div class="stat-label">صحة المخ</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-value" id="money-spent">0 د.ك</div>
+                        <div class="stat-label">فلوس ضايعة</div>
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="nav-btn" id="prev-btn" onclick="prevStep()" disabled>⬅️ السابق</button>
+                    <button class="nav-btn green" id="next-btn" onclick="nextStep()">التالي ➡️</button>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Shisha Character -->
     <div class="shisha-character" onclick="shishaClick()">🪬</div>
@@ -657,6 +973,490 @@
     </div>
 
     <script>
+        // ============================================
+        // THREE.JS 3D HEALTH SIMULATION
+        // ============================================
+
+        let scene, camera, renderer, controls;
+        let bodyGroup, lungs, heart, brain, teeth, smokeParticles = [];
+        let currentStep = 0;
+
+        // Simulation steps data
+        const simulationSteps = [
+            {
+                title: "أحمد السليم 🌟",
+                description: "هذا أحمد قبل ما يبدأ يدخن شيشة. رئتيه زي الورد، قلبه قوي، ومخه شغال 100%! كل شي تمام... لكن شوف شو رح يصير!",
+                damage: 0,
+                lungHealth: 100,
+                heartHealth: 100,
+                brainHealth: 100,
+                moneySpent: 0,
+                lungColor: 0xff6b9d,
+                heartColor: 0xff4757,
+                brainColor: 0xffa502,
+                smokeIntensity: 0
+            },
+            {
+                title: "أول شيشة 🚬",
+                description: "أحمد قرر يجرب 'بس مرة وحدة'... الرئتين بدأت تتعرف على السموم. 36 مادة مسرطنة دخلت جسمه! بس هو مش حاسس بعد...",
+                damage: 20,
+                lungHealth: 85,
+                heartHealth: 95,
+                brainHealth: 90,
+                moneySpent: 50,
+                lungColor: 0xe55a7b,
+                heartColor: 0xff4757,
+                brainColor: 0xf59f00,
+                smokeIntensity: 0.3
+            },
+            {
+                title: "سنة من التدخين 📅",
+                description: "صار أحمد يدخن كل يوم! رئتيه بدأت تتحول للون الرمادي، قلبه بيضرب أسرع، والفلوس بتطير! بدأ يسعل بالليل...",
+                damage: 45,
+                lungHealth: 65,
+                heartHealth: 80,
+                brainHealth: 75,
+                moneySpent: 600,
+                lungColor: 0xa8a8a8,
+                heartColor: 0xe84118,
+                brainColor: 0xe67e22,
+                smokeIntensity: 0.5
+            },
+            {
+                title: "5 سنين من الدمار 💀",
+                description: "الآن أحمد ما يقدر يطلع الدرج! رئتيه سودا، قلبه متعب، ومخه ناقص أوكسجين. الدكتور قال: 'لازم تبطّل!'",
+                damage: 75,
+                lungHealth: 40,
+                heartHealth: 55,
+                brainHealth: 50,
+                moneySpent: 3000,
+                lungColor: 0x4a4a4a,
+                heartColor: 0xc0392b,
+                brainColor: 0xd35400,
+                smokeIntensity: 0.8
+            },
+            {
+                title: "القرار الأخير! ⚡",
+                description: "أحمد لازم يختار: يكمل ويدمر صحته... أو يبطّل الآن ويبدأ يتعافى! الجسم عنده قدرة عجيبة على الشفاء إذا بطّلت!",
+                damage: 90,
+                lungHealth: 25,
+                heartHealth: 35,
+                brainHealth: 30,
+                moneySpent: 6000,
+                lungColor: 0x2d2d2d,
+                heartColor: 0x922b21,
+                brainColor: 0xa04000,
+                smokeIntensity: 1
+            }
+        ];
+
+        function init3D() {
+            const container = document.getElementById('threejs-container');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            // Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0a15);
+            scene.fog = new THREE.Fog(0x0a0a15, 5, 20);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
+            camera.position.set(0, 0, 6);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+
+            // Controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.minDistance = 3;
+            controls.maxDistance = 10;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.5;
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
+
+            const pointLight1 = new THREE.PointLight(0xff6b6b, 1, 20);
+            pointLight1.position.set(5, 5, 5);
+            scene.add(pointLight1);
+
+            const pointLight2 = new THREE.PointLight(0x54a0ff, 0.8, 20);
+            pointLight2.position.set(-5, -5, 5);
+            scene.add(pointLight2);
+
+            const spotLight = new THREE.SpotLight(0xffffff, 0.5);
+            spotLight.position.set(0, 10, 0);
+            spotLight.castShadow = true;
+            scene.add(spotLight);
+
+            // Create body
+            createBody();
+
+            // Create smoke particle system
+            createSmokeSystem();
+
+            // Animation
+            animate();
+
+            // Handle resize
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function createBody() {
+            bodyGroup = new THREE.Group();
+
+            // Torso (semi-transparent)
+            const torsoGeometry = new THREE.CylinderGeometry(1.2, 0.9, 3, 32);
+            const torsoMaterial = new THREE.MeshPhongMaterial({
+                color: 0x2d3436,
+                transparent: true,
+                opacity: 0.3,
+                side: THREE.DoubleSide
+            });
+            const torso = new THREE.Mesh(torsoGeometry, torsoMaterial);
+            torso.position.y = 0;
+            bodyGroup.add(torso);
+
+            // Head
+            const headGeometry = new THREE.SphereGeometry(0.6, 32, 32);
+            const headMaterial = new THREE.MeshPhongMaterial({
+                color: 0xffeaa7,
+                transparent: true,
+                opacity: 0.7
+            });
+            const head = new THREE.Mesh(headGeometry, headMaterial);
+            head.position.y = 2.1;
+            bodyGroup.add(head);
+
+            // Lungs (main organs)
+            const lungGeometry = new THREE.SphereGeometry(0.45, 32, 32);
+            lungGeometry.scale(0.8, 1, 0.6);
+
+            const lungMaterial = new THREE.MeshPhongMaterial({
+                color: 0xff6b9d,
+                emissive: 0xff6b9d,
+                emissiveIntensity: 0.2,
+                shininess: 100
+            });
+
+            // Left lung
+            const leftLung = new THREE.Mesh(lungGeometry, lungMaterial.clone());
+            leftLung.position.set(-0.5, 0.5, 0);
+
+            // Right lung
+            const rightLung = new THREE.Mesh(lungGeometry, lungMaterial.clone());
+            rightLung.position.set(0.5, 0.5, 0);
+
+            lungs = new THREE.Group();
+            lungs.add(leftLung);
+            lungs.add(rightLung);
+            bodyGroup.add(lungs);
+
+            // Heart
+            const heartShape = new THREE.Shape();
+            heartShape.moveTo(0, 0);
+            heartShape.bezierCurveTo(0, -0.3, -0.4, -0.3, -0.4, 0);
+            heartShape.bezierCurveTo(-0.4, 0.3, 0, 0.6, 0, 0.8);
+            heartShape.bezierCurveTo(0, 0.6, 0.4, 0.3, 0.4, 0);
+            heartShape.bezierCurveTo(0.4, -0.3, 0, -0.3, 0, 0);
+
+            const heartGeometry = new THREE.ExtrudeGeometry(heartShape, {
+                depth: 0.3,
+                bevelEnabled: true,
+                bevelSegments: 5,
+                bevelSize: 0.05,
+                bevelThickness: 0.05
+            });
+
+            const heartMaterial = new THREE.MeshPhongMaterial({
+                color: 0xff4757,
+                emissive: 0xff4757,
+                emissiveIntensity: 0.3,
+                shininess: 100
+            });
+
+            heart = new THREE.Mesh(heartGeometry, heartMaterial);
+            heart.scale.set(0.5, 0.5, 0.5);
+            heart.position.set(0, 0.1, 0.3);
+            heart.rotation.z = Math.PI;
+            bodyGroup.add(heart);
+
+            // Brain
+            const brainGeometry = new THREE.SphereGeometry(0.35, 32, 32);
+            const brainMaterial = new THREE.MeshPhongMaterial({
+                color: 0xffa502,
+                emissive: 0xffa502,
+                emissiveIntensity: 0.2,
+                shininess: 50
+            });
+            brain = new THREE.Mesh(brainGeometry, brainMaterial);
+            brain.position.set(0, 2.1, 0);
+            brain.scale.set(1.2, 0.9, 1);
+            bodyGroup.add(brain);
+
+            // Teeth (in mouth area)
+            const teethGeometry = new THREE.BoxGeometry(0.4, 0.1, 0.1);
+            const teethMaterial = new THREE.MeshPhongMaterial({
+                color: 0xffffff,
+                shininess: 100
+            });
+            teeth = new THREE.Mesh(teethGeometry, teethMaterial);
+            teeth.position.set(0, 1.7, 0.5);
+            bodyGroup.add(teeth);
+
+            // Add veins/arteries
+            const veinMaterial = new THREE.MeshPhongMaterial({
+                color: 0x74b9ff,
+                emissive: 0x74b9ff,
+                emissiveIntensity: 0.1
+            });
+
+            for (let i = 0; i < 5; i++) {
+                const veinGeometry = new THREE.CylinderGeometry(0.02, 0.02, 1 + Math.random());
+                const vein = new THREE.Mesh(veinGeometry, veinMaterial);
+                vein.position.set(
+                    (Math.random() - 0.5) * 0.8,
+                    Math.random() - 0.5,
+                    0.2
+                );
+                vein.rotation.z = (Math.random() - 0.5) * 0.5;
+                bodyGroup.add(vein);
+            }
+
+            scene.add(bodyGroup);
+        }
+
+        function createSmokeSystem() {
+            const smokeGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+            const smokeMaterial = new THREE.MeshBasicMaterial({
+                color: 0x666666,
+                transparent: true,
+                opacity: 0
+            });
+
+            for (let i = 0; i < 50; i++) {
+                const particle = new THREE.Mesh(smokeGeometry, smokeMaterial.clone());
+                particle.position.set(
+                    (Math.random() - 0.5) * 2,
+                    (Math.random() - 0.5) * 3,
+                    (Math.random() - 0.5) * 2
+                );
+                particle.userData = {
+                    velocity: new THREE.Vector3(
+                        (Math.random() - 0.5) * 0.02,
+                        Math.random() * 0.02 + 0.01,
+                        (Math.random() - 0.5) * 0.02
+                    ),
+                    originalY: particle.position.y
+                };
+                smokeParticles.push(particle);
+                scene.add(particle);
+            }
+        }
+
+        function updateSmokeParticles(intensity) {
+            smokeParticles.forEach(particle => {
+                particle.material.opacity = intensity * 0.4 * Math.random();
+
+                if (intensity > 0) {
+                    particle.position.add(particle.userData.velocity);
+
+                    if (particle.position.y > 3) {
+                        particle.position.y = particle.userData.originalY;
+                        particle.position.x = (Math.random() - 0.5) * 2;
+                        particle.position.z = (Math.random() - 0.5) * 2;
+                    }
+
+                    particle.scale.setScalar(1 + Math.sin(Date.now() * 0.001 + particle.position.x) * 0.3);
+                }
+            });
+        }
+
+        function updateOrganColors(step) {
+            const data = simulationSteps[step];
+
+            // Animate lung color change
+            lungs.children.forEach(lung => {
+                gsapColorTransition(lung.material, data.lungColor);
+                lung.material.emissive.setHex(data.lungColor);
+                lung.material.emissiveIntensity = 0.2 + (1 - data.lungHealth / 100) * 0.3;
+            });
+
+            // Animate heart
+            gsapColorTransition(heart.material, data.heartColor);
+            heart.material.emissive.setHex(data.heartColor);
+
+            // Animate brain
+            gsapColorTransition(brain.material, data.brainColor);
+            brain.material.emissive.setHex(data.brainColor);
+
+            // Teeth yellowing
+            const teethYellow = Math.floor((1 - data.lungHealth / 100) * 255);
+            teeth.material.color.setRGB(1, 1 - teethYellow / 500, 1 - teethYellow / 300);
+        }
+
+        function gsapColorTransition(material, targetColor) {
+            const target = new THREE.Color(targetColor);
+            const current = material.color;
+
+            // Simple linear interpolation for color
+            const animate = () => {
+                current.lerp(target, 0.05);
+                material.color = current;
+                if (current.getHex() !== target.getHex()) {
+                    requestAnimationFrame(animate);
+                }
+            };
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Heartbeat animation
+            const heartbeat = Math.sin(Date.now() * 0.005) * 0.05 + 1;
+            if (heart) {
+                heart.scale.set(0.5 * heartbeat, 0.5 * heartbeat, 0.5 * heartbeat);
+            }
+
+            // Lung breathing animation
+            if (lungs) {
+                const breathe = Math.sin(Date.now() * 0.002) * 0.1 + 1;
+                lungs.scale.set(breathe, breathe, breathe);
+            }
+
+            // Brain pulse
+            if (brain) {
+                const pulse = Math.sin(Date.now() * 0.003) * 0.03 + 1;
+                brain.scale.set(1.2 * pulse, 0.9 * pulse, pulse);
+            }
+
+            // Update smoke based on current step
+            updateSmokeParticles(simulationSteps[currentStep].smokeIntensity);
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('threejs-container');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        // ============================================
+        // SIMULATION CONTROLS
+        // ============================================
+
+        function updateUI(step) {
+            const data = simulationSteps[step];
+
+            // Update step dots
+            document.querySelectorAll('.step-dot').forEach((dot, i) => {
+                dot.classList.remove('active', 'completed');
+                if (i === step) dot.classList.add('active');
+                if (i < step) dot.classList.add('completed');
+            });
+
+            // Update content
+            document.getElementById('step-title-text').textContent = data.title;
+            document.getElementById('step-description').textContent = data.description;
+            document.getElementById('damage-percent').textContent = data.damage + '%';
+
+            // Update damage bar
+            const damageFill = document.getElementById('damage-fill');
+            damageFill.style.width = data.damage + '%';
+            if (data.damage < 30) {
+                damageFill.style.background = 'linear-gradient(90deg, #26de81, #20bf6b)';
+            } else if (data.damage < 60) {
+                damageFill.style.background = 'linear-gradient(90deg, #feca57, #ff9f43)';
+            } else {
+                damageFill.style.background = 'linear-gradient(90deg, #ff6b6b, #ee5a5a)';
+            }
+
+            // Update health stats
+            updateHealthStat('lung-health', data.lungHealth);
+            updateHealthStat('heart-health', data.heartHealth);
+            updateHealthStat('brain-health', data.brainHealth);
+            document.getElementById('money-spent').textContent = data.moneySpent + ' د.ك';
+
+            // Update money color
+            const moneyEl = document.getElementById('money-spent');
+            if (data.moneySpent > 2000) {
+                moneyEl.classList.add('danger');
+                moneyEl.classList.remove('warning');
+            } else if (data.moneySpent > 500) {
+                moneyEl.classList.add('warning');
+                moneyEl.classList.remove('danger');
+            } else {
+                moneyEl.classList.remove('danger', 'warning');
+            }
+
+            // Update buttons
+            document.getElementById('prev-btn').disabled = step === 0;
+            document.getElementById('next-btn').disabled = step === simulationSteps.length - 1;
+
+            // Update 3D visualization
+            updateOrganColors(step);
+        }
+
+        function updateHealthStat(elementId, value) {
+            const el = document.getElementById(elementId);
+            el.textContent = value + '%';
+
+            el.classList.remove('danger', 'warning');
+            if (value < 40) {
+                el.classList.add('danger');
+            } else if (value < 70) {
+                el.classList.add('warning');
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < simulationSteps.length - 1) {
+                currentStep++;
+                updateUI(currentStep);
+
+                // Camera zoom effect
+                camera.position.z = 6 - currentStep * 0.3;
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                updateUI(currentStep);
+
+                camera.position.z = 6 - currentStep * 0.3;
+            }
+        }
+
+        // Step dot click handlers
+        document.querySelectorAll('.step-dot').forEach(dot => {
+            dot.addEventListener('click', () => {
+                const step = parseInt(dot.dataset.step);
+                currentStep = step;
+                updateUI(currentStep);
+                camera.position.z = 6 - currentStep * 0.3;
+            });
+        });
+
+        // ============================================
+        // ORIGINAL FUNCTIONALITY
+        // ============================================
+
         // Create smoke effects
         const smokeContainer = document.getElementById('smokeContainer');
         for (let i = 0; i < 15; i++) {
@@ -797,6 +1597,12 @@
                 alert('تم نسخ الرابط! 📋');
             }
         }
+
+        // Initialize 3D scene when page loads
+        window.addEventListener('load', () => {
+            init3D();
+            updateUI(0);
+        });
     </script>
 </body>
 </html>
